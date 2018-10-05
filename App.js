@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { WebBrowser } from 'expo';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 let priceColor = 'mediumseagreen';
 let buttonColor = 'lightgreen';
@@ -145,9 +145,11 @@ function Title({
 }){
   return(
     <View style = {styles.title}>
+      <Ionicons name = "md-arrow-back" style = {styles.titleIcons}/>
       <Text style = {styles.titleText}>
         {title}
       </Text>
+      <Ionicons name = "md-arrow-back" style = {styles.titleIcons}/>
     </View>
   )
 }
@@ -214,7 +216,8 @@ function CheckCircle({
       {(function(){
         if(isSelected){
           return (
-            <Text style = {[styles.checkCircleText, {fontSize : size * 0.6}]}>√</Text>
+            //<Text style = {[styles.checkCircleText, {fontSize : size * 0.6}]}>√</Text>
+            <FontAwesome name = "check" style ={[styles.checkCircleText, {fontSize : size * 0.6}]}></FontAwesome>
           )
         }
       })()}
@@ -264,7 +267,7 @@ function TotalCourses({
   return(
     <View style = {styles.totalCourses}>
       {/*<View style = {{height:20, width:20, backgroundColor:'white', marginLeft: 15, marginRight:10}} />*/}
-      <FontAwesome name = 'shopping-cart' size = {24} style = {{color: colorLightGreen, marginLeft: 13, marginRight: 8}} />
+      <Ionicons name = "md-cart" size = {30} style = {{color: colorLightGreen, marginLeft: 13, marginRight: 7}} />
       <Text style = {[styles.totalCoursesText, {fontWeight:'bold', color:textColor}]}>{numCourses}</Text>
       <Text style = {styles.totalCoursesText}> Courses </Text>
       <View style = {{height:20, width:2, backgroundColor: 'lightgray' }} />
@@ -281,23 +284,12 @@ function SelectedCourses({
   return(
     <View style = {styles.selectedCourses}>
       <View style = {{flexDirection:'row', alignItems:'center'}}>
-        {/*<View style = {[styles.shopPriceCircle, {marginLeft: 15, marginRight: 10}]} />*/}
         <CheckCircle margin = {10}/>
         <Text style = {styles.selectedCoursesText}>Select All ({numSelected} / {numTotal})
         </Text>
       </View>
-      {/*
-      <CenterizedText 
-        //text = '凶' 
-        text = 'Delete'
-        fontColor = 'white'
-        fontWeight = 'bold'
-        width = {80} 
-        height = {30} 
-        //margin= {5}
-        backgroundColor = 'lightpink' />
-        */}
-        <FontAwesome name = 'trash-o' size = {30} style = {{color: colorRed, margin:5}} />
+
+        <Ionicons name = 'md-trash' size = {30} style = {{color: colorRed, margin:5}} />
     </View>
   )
 }
@@ -345,8 +337,9 @@ const styles = StyleSheet.create({
     height:45,
     backgroundColor: 'white',
     paddingHorizontal: 15,
+    flexDirection: 'row',
     alignItems:'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     marginBottom: 1,
   },
   titleText:{
