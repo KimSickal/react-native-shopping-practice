@@ -53,19 +53,7 @@ export default class App extends React.Component {
         <TapButton 
           title = 'Purchased' />
         </View>
-        {/*
-        <View style = {{backgroundColor: 'white', marginBottom: 1}}>
-        ///////////////////////////////////////////////////////////////필요한가?
-          <Text style = {styles.recentUpdate}>
-            Recent Update: HH:mm DD.MM.YYYY
-          </Text>
-          <TotalCourses></TotalCourses>
-          <SelectedCourses></SelectedCourses>
-        </View>
-        */}
-        <ShopContentDummy />
-
-        
+        <ShopContentsScroll />
         <CheckOutButton totalFee = '3,333' originFee = '0' disountFee = '0' /> 
       </SafeAreaView>
     );
@@ -73,20 +61,13 @@ export default class App extends React.Component {
 }
 
 function ShopContent({
-  data = null, 
   cName = 'Name of Content',
-  cSummary = 'summary of content',
   cDate = 'DD-MM-YYYY',
   cPrice = 1111,
   isSelected = false,
+  star = 2,
+  reviews = 112,
 }){
-  if(!(data == null)){
-    cName = data[0];
-    cSummary = data[1];
-    cDate = data[2];
-    cPrice = data[3];
-    isSelected = data[4];
-  }
   return(
     <View style = {[styles.shopContent, isSelected ? styles.shopContentSelected : styles.shopContentSelectedNot]}>
       {/*
@@ -108,16 +89,7 @@ function ShopContent({
             style = {styles.shopTextTitle}>
               {cName}
             </Text>
-            {/*
-            <Text 
-            numberOfLines = {1}
-            style = {styles.shopTextSummary}>    
-              {cSummary}
-            </Text>
-            <View style = {{flexDirection:'row', justifyContent: 'space-between', alignItems: 'center'}}>
-            </View>
-            */}
-            <Star />
+            <Star score = {star} reviews = {reviews}/>
             <View style = {{flexDirection: 'row', justifyContent: 'space-between'}}>
               <PriceText price = {cPrice}></PriceText>
               <Text
@@ -184,70 +156,81 @@ function ShopContentsCalculationCategory({
 }
 
 function ShopContentsScroll({
-  categories = {
-    'courses': [
-      'dummy1',
-      'dummy2',
-    ],
-    'texbooks': [
-      'dummy1',
-      'dummy2',
-    ]
-  }
 }){
-  var scrollLength = 0;
-  var headerIndex = [];
-  var data = [1, 2, 3, 4];
-  /*
-  for(var key in categories){
-    headerIndex.push(scrollLength);
-    scrollLength += (categories[key].length + 1);
-    data.push[{name: 'header'}];
-    for(var keykey in categories[key]){
-      data.push[{name: 'content'}];
-    }
+  var headerIndices =[]
+  for(var i = 0; i < 3; i++){
+    headerIndices.push(2*i+1);
   }
-  */
-
-  renderItem = ({ item }) => {
-    return(
-      <ShopContent />
-    )
+  var scrollItems = [];
+  var keyCounter = 0;
+  function listWithCategories(
+    categoryName = 'Courses',
+    shopContents = [{
+      name: 'Name of Content',
+      star: 3,
+      review: 132,
+      price: 1111,
+      date: 'DD-MM-YYYY',
+      checked: false,
+    },{
+      name: 'Name of Content',
+      star: 3,
+      review: 132,
+      price: 1111,
+      date: 'DD-MM-YYYY',
+      checked: false,
+    },{
+      name: 'Name of Content',
+      star: 3,
+      review: 132,
+      price: 1111,
+      date: 'DD-MM-YYYY',
+      checked: false,
+    },
+    ]
+  ){
+    scrollItems.push(<ShopContentsCategory categoryName = {categoryName} key = {keyCounter++} />);
+    scrollItems.push(<ShopContentsUnderCategory data = {shopContents} key = {keyCounter++} />);
+  }
+  for(var i = 0; i < 3; i++){
+    listWithCategories();
   }
   return(
     <ScrollView 
-      stickyHeaderIndices = {this.headerIndex}>
+      stickyHeaderIndices = {headerIndices}>
+      <SelectedCourses />
+      {scrollItems}
+      <ShopContentsCalculation />
     </ScrollView>
   )
 }
 
-function ShopContentDummy(){
+function ShopContentsUnderCategory({
+  data
+}){
+  var keyCounter = 0;
   return(
-    <ScrollView
-      stickyHeaderIndices = {[1, 6,]}>
-        <SelectedCourses />
-        <ShopContentsCategory />
-        <ShopContent 
-          cName = 'Text Trunscate' 
-          cPrice = {2530} 
-          cSummary = 'sleepy'
-          cDate = '10-05-2018'
-          />
-        <ShopContent 
-          cName = 'Long Text Test Long Text Test Long Text Test'
-          cSummary = 'long summary test long summary test hyle hidra'
-          isSelected = {true} />
-        <ShopContent />
-        <View style = {styles.division} />
-        <ShopContentsCategory categoryName = 'Textbooks' numItems = {7}/>
-        <ShopContent isSelected = {true}/>
-        <ShopContent isSelected = {true}/>
-        <ShopContent />
-        <ShopContent />
-        <ShopContent />
-        <View style = {styles.division} />
-        <ShopContentsCalculation />
-    </ScrollView>
+    <View>
+      {
+        Object.keys(data).map((contentKey) => {
+          var content = data[contentKey];
+          return(
+            /*
+            <ShopContent
+              cName = {content[name]}
+              cPrice = {content[price]}
+              cDate = {content[date]}
+              isSelected = {content[checked]}
+              star = {content[star]}
+              review = {content[review]} 
+              key = {keyCounter++} />
+              */
+            <ShopContent key = {keyCounter++}/>
+          )
+        })
+      }
+      <View style = {styles.division} />
+    </View>
   )
 }
 
@@ -376,16 +359,20 @@ function PriceText({
 }
 
 function Star({
-  score = 7,
+  score = 3,
   reviews = 132,
 }){
+  stars = [];
+  var keyCounter = 0;
+  for(var i = 0; i < score; i++){
+    stars.push(<Ionicons name = 'md-star' style = {[styles.star, {color:colorStar}]} key = {keyCounter++}/>);
+  }
+  for(var i = 5; i > score; i--){
+    stars.push(<Ionicons name = 'md-star' style = {[styles.star, {color:colorLightGray}]} key = {keyCounter++} />);
+  }
   return(
     <View style = {{flexDirection:"row", alignItems: 'center'}} >
-      <Ionicons name = 'md-star' style = {[styles.star, {color: colorStar}]} />
-      <Ionicons name = 'md-star' style = {[styles.star, {color: colorStar}]} />
-      <Ionicons name = 'md-star' style = {[styles.star, {color: colorStar}]} />
-      <Ionicons name = 'md-star' style = {[styles.star, {color: colorLightGray}]} />
-      <Ionicons name = 'md-star' style = {[styles.star, {color: colorLightGray}]} />
+      {stars}
       <Text style = {styles.starText}> ({reviews})</Text>
     </View>
   )
@@ -614,7 +601,7 @@ const styles = StyleSheet.create({
 
   shopContentsCalculation:{
     backgroundColor: 'white',
-    paddingTop: 5,
+    paddingTop: 10,
     paddingBottom: 10,
     paddingHorizontal: baseMargin,
 
