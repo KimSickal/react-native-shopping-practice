@@ -11,11 +11,10 @@ let colorGray = 'gray';
 let colorLightGray = 'lightgray';
 //let colorGreen = 'mediumseagreen';
 let colorGreen = 'tomato';
-let priceColor = 'dimgray';
+let priceColor = colorGray;
 let colorLightGreen = colorGreen;
 let colorLightLightGreen = '#eefcee';
 let colorRed = 'tomato';
-let colorStar = 'orange';
 
 let fontTitle = 20;
 let fontNormal = 14;
@@ -27,7 +26,6 @@ let borderWidth = 2;
 
 let baseMargin = 20;
 let horizontalMargin = 2*baseMargin + 20;
-
 
 export default class App extends React.Component {
   
@@ -64,9 +62,6 @@ export default class App extends React.Component {
         </View>
         */}
         <ShopContentDummy />
-
-        
-        <CheckOutButton totalFee = '3,333' originFee = '0' disountFee = '0' /> 
       </SafeAreaView>
     );
   }
@@ -117,9 +112,8 @@ function ShopContent({
             <View style = {{flexDirection:'row', justifyContent: 'space-between', alignItems: 'center'}}>
             </View>
             */}
-            <Star />
             <View style = {{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <PriceText price = {cPrice}></PriceText>
+            <PriceText price = {cPrice}></PriceText>
               <Text
               numberOfLines = {1}
               style = {[{textAlign:'right'},styles.shopTextSummary]}>
@@ -131,54 +125,6 @@ function ShopContent({
         <Ionicons name = 'md-close' size = {20} style = {{color:colorLightGray, marginHorizontal: baseMargin}} />
       
       
-    </View>
-  )
-}
-
-function ShopContentsCategory({
-  categoryName = 'Courses',
-  numItems = 3,
-}){
-  return(
-    <View style = {styles.totalCourses}>
-      {/*<View style = {{height:20, width:20, backgroundColor:'white', marginLeft: 15, marginRight:10}} />*/}
-      <Ionicons name = "md-cart" size = {30} style = {{color: colorLightGreen, marginLeft: baseMargin - 2, marginRight: baseMargin - 3}} />
-      <Text style = {styles.totalCoursesText}>{categoryName}: </Text>
-      <Text style = {[styles.totalCoursesText, {fontWeight:'bold', color:textColor}]}>{numItems}</Text>
-    </View>
-  )
-}
-
-function ShopContentsCalculation({
-  fees={
-    "Course" : 2222,
-    "Textbook" : 1111,
-    "Shipping" : 560,
-  },
-  discountFee = -200,
-  totalFee = 3593,
-}){
-  return(
-    <View style = {styles.shopContentsCalculation} >
-      <ShopContentsCalculationCategory categoryName = 'Course' categoryFee = {2222} />
-      <ShopContentsCalculationCategory categoryName = 'Textbook' categoryFee = {1111} />
-      <ShopContentsCalculationCategory categoryName = 'Shipping' categoryFee = {560} />
-      <View style = {{height:1, backgroundColor: colorLightGray, flex: 1}} />
-      <ShopContentsCalculationCategory categoryName = 'Discount' categoryFee = {-200} />
-      <View style = {{height:1, backgroundColor: colorLightGray, flex: 1}} />
-      <ShopContentsCalculationCategory categoryName = 'Total' categoryFee = {3593} />
-    </View>
-  )
-}
-
-function ShopContentsCalculationCategory({
-  categoryName = 'Course',
-  categoryFee = 1111,
-}){
-  return(
-    <View style = {styles.shopContentsCulationCategory}>
-      <Text style = {styles.shopContentsCalculationCategoryText}>{categoryName}</Text>
-      <PriceText price = {categoryFee} fontSize = {fontLarge} />
     </View>
   )
 }
@@ -224,9 +170,7 @@ function ShopContentsScroll({
 function ShopContentDummy(){
   return(
     <ScrollView
-      stickyHeaderIndices = {[1, 6,]}>
-        <SelectedCourses />
-        <ShopContentsCategory />
+      stickyHeaderIndices = {[]}>
         <ShopContent 
           cName = 'Text Trunscate' 
           cPrice = {2530} 
@@ -238,15 +182,11 @@ function ShopContentDummy(){
           cSummary = 'long summary test long summary test hyle hidra'
           isSelected = {true} />
         <ShopContent />
-        <View style = {styles.division} />
-        <ShopContentsCategory categoryName = 'Textbooks' numItems = {7}/>
         <ShopContent isSelected = {true}/>
         <ShopContent isSelected = {true}/>
         <ShopContent />
         <ShopContent />
         <ShopContent />
-        <View style = {styles.division} />
-        <ShopContentsCalculation />
     </ScrollView>
   )
 }
@@ -375,86 +315,7 @@ function PriceText({
   )
 }
 
-function Star({
-  score = 7,
-  reviews = 132,
-}){
-  return(
-    <View style = {{flexDirection:"row", alignItems: 'center'}} >
-      <Ionicons name = 'md-star' style = {[styles.star, {color: colorStar}]} />
-      <Ionicons name = 'md-star' style = {[styles.star, {color: colorStar}]} />
-      <Ionicons name = 'md-star' style = {[styles.star, {color: colorStar}]} />
-      <Ionicons name = 'md-star' style = {[styles.star, {color: colorLightGray}]} />
-      <Ionicons name = 'md-star' style = {[styles.star, {color: colorLightGray}]} />
-      <Text style = {styles.starText}> ({reviews})</Text>
-    </View>
-  )
-}
 
-function SelectedCourses({
-  numTotal = 10,
-  numSelected = 3,
-}){
-  return(
-    <View style = {styles.selectedCourses}>
-      <View style = {{flexDirection:'row', alignItems:'center'}}>
-        <CheckCircle margin = {baseMargin}/>
-        <Text style = {styles.selectedCoursesText}>Select All ({numSelected} / {numTotal})
-        </Text>
-      </View>
-      {/*
-      <CenterizedText
-        height = {30}
-        width = {60}
-        text = 'Delete'
-        fontColor = 'white'
-        backgroundColor = {colorLightGray}
-      />
-      */}
-         <Ionicons name = 'md-trash' size = {30} style = {{color: colorLightGray, margin:5, marginRight:baseMargin-5}} />
-    </View>
-  )
-}
-
-function CheckOutButton({
-  totalFee = 3593,
-  originFee = 0,
-  discountFee = 0,
-}){
-  return(
-    <View style = {styles.checkOutButton}>
-      <View style = {{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginRight: 10}}>
-        <View style = {{flexDirection: 'row', alignItems: 'center',}}>
-          <CheckCircle
-            margin = {baseMargin}
-            isSelected = {true}
-            />
-          <Text style = {styles.checkOutButtonTextLarge}>3 Items</Text>
-        </View>
-        <View style = {{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style = {styles.checkOutButtonTextLarge}>Total </Text>
-          <PriceText price = {3593} fontSize = {fontLarge} color = {colorLightGreen} />
-        </View>
-        {/*}
-        <View style = {{flexDirection: 'row'}}>
-          <Text style = {styles.checkOutButtonTextSmall}>Original Fee: ${originFee}</Text>
-          <Text style = {styles.checkOutButtonTextSmall}> | Discount Fee: ${discountFee}</Text>
-        </View>
-        {*/}
-      </View>
-      <CenterizedText
-        height = {60}
-        width = {120}
-        backgroundColor = {colorLightGreen}
-        text = 'Check Out'
-        fontColor = 'white'
-        fontSize = {fontLarge}
-        fontWeight = 'bold'
-      />
-      
-    </View>
-  )
-}
 const styles = StyleSheet.create({
   title:{
     height:45,
@@ -474,28 +335,6 @@ const styles = StyleSheet.create({
   titleIcons:{
     fontSize: fontTitle * 1.2,
     color: textColor,
-  },
-
-  badgeCount:{
-    color:'white',
-  },
-  badgeCircle:{
-    backgroundColor: colorRed,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  checkCircleText:{
-    color: 'white',
-    fontWeight: 'bold',
-  },
-
-  star:{
-    fontSize: fontNormal,
-  },
-  starText:{
-    fontSize: fontSmall,
-    color: colorGray,
   },
 
 
@@ -530,42 +369,6 @@ const styles = StyleSheet.create({
     color: textColor,
   },
 
-
-  totalCourses:{
-    flexDirection:'row',
-    alignItems:'center',
-    justifyContent:'flex-start',
-    backgroundColor: 'white',
-    borderBottomColor: colorLightGray,
-    borderBottomWidth: 1,
-    height:40,
-  },
-  totalCoursesText:{
-    fontSize: fontNormal,
-    color: textColor,
-  },
-
-  recentUpdate:{
-    fontSize: fontNormal,
-    color: 'gray',
-    marginHorizontal:15,
-  },
-
-  selectedCourses:{
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: 'white',
-    //paddingRight: baseMargin,
-    marginBottom: 1,
-    height: 40,
-  },
-  selectedCoursesText:{
-    fontSize: fontNormal,
-    color:'gray',
-  },
-
-
   shopContent:{
     //margin:contentDummyMargin,
     marginTop:0,
@@ -586,10 +389,10 @@ const styles = StyleSheet.create({
     flex:1,
   },
   shopText:{
-    //padding: 10,
-    //paddingRight: 0,
-    //paddingTop: 5,
-    paddingLeft: 10,
+    padding: 10,
+    paddingRight: 0,
+    paddingTop: 5,
+    //paddingHorizontal: 10,
     flex:1,
     height:80,
     justifyContent: 'center',
@@ -603,45 +406,7 @@ const styles = StyleSheet.create({
   shopTextTitle:{
     color: textColor,
     fontSize: fontLarge,
-    //marginBottom: 5,
-  },
-
-  division:{
-    height: 10,
-    borderTopWidth:5,
-    borderTopColor: 'white',
-  },
-
-  shopContentsCalculation:{
-    backgroundColor: 'white',
-    paddingTop: 5,
-    paddingBottom: 10,
-    paddingHorizontal: baseMargin,
-
-  },
-  shopContentsCulationCategory:{
-    //paddingHorizontal: baseMargin,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical:5,
-  },
-  shopContentsCalculationCategoryText:{
-    fontSize: fontNormal,
-    color: textColor,
-  },
-
-  checkOutButton:{
-    flexDirection: 'row',
-    marginTop:1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    backgroundColor: 'white',
-  },
-  checkOutButtonTextLarge:{
-    fontSize: fontLarge,
-    //fontWeight: 'bold',
-    color: textColor,
+    marginBottom: 5,
   },
   container: {
     flex: 1,
