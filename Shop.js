@@ -32,7 +32,7 @@ export class Shop extends React.Component {
           <TapButton
             title='Purchased' />
         </View>
-        <ShopContentsScroll />
+        <ShopContentsScroll/>
         <CheckOutButton totalFee='3,333' originFee='0' disountFee='0' />
       </SafeAreaView>
     );

@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, 
+  TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as BuildStyle from '../BuildStyle';
 
@@ -11,8 +12,11 @@ import { PriceText } from './PriceText';
 export class ShopContent extends React.Component {
   constructor(props){
     super(props);
-    this.state = {isSelected : false};
-    this.onPress = this.onPress.bind(this);
+  }
+  componentWillMount() {
+    this.setState({
+      name: 'www',
+    })
   }
   render() {
     const {
@@ -27,7 +31,10 @@ export class ShopContent extends React.Component {
     return (
       <View style={[styles.shopContent, isSelected ? styles.shopContentSelected : styles.shopContentSelectedNot]}>
         {checkable ?
-          <CheckCircle margin={BuildStyle.baseMargin} isSelected={isSelected} /> :
+          <TouchableOpacity onPress = {this.props.onPress} >
+            <CheckCircle margin={BuildStyle.baseMargin} isSelected={isSelected} />
+          </TouchableOpacity>
+          :
           <View style={{ width: 5 }} />}
         <CenterizedText
           text='image'
