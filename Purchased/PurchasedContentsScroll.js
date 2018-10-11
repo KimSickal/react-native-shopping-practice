@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, StatusBar, Text, View, ScrollView, } from 'react-native';
+import { StyleSheet, View, ScrollView, } from 'react-native';
 
 import * as BuildStyle from '../BuildStyle';
 
@@ -9,11 +9,19 @@ import { SubTab } from '../Search/SubTab';
 
 import { data } from '../Cart/DummyShopInfo';
 
+import { categoryData } from './DummyCategoryInfo';
+
 
 export class PurchasedContentsScroll extends React.Component {
+  constructor(props) {
+    super(props);
+    this.categoryHandler = this.categoryHandler.bind(this);
+  }
   componentWillMount() {
     let tempData = data;
+    let tempIndices = []
     Object.keys(tempData).map((categoryIndex) => {
+      tempIndices.push(0);
       Object.keys(tempData[categoryIndex].shopContents).map((contentIndex) => {
         (tempData[categoryIndex].shopContents[contentIndex]).isSelected = true;
         (tempData[categoryIndex].shopContents[contentIndex]).checkable = false;
@@ -22,7 +30,17 @@ export class PurchasedContentsScroll extends React.Component {
     });
     this.setState({
       dict: tempData,
+      selectedIndices: tempIndices,
     })
+  }
+  categoryHandler(index1) {
+    return (index2) => {
+      return () => {
+        let tempIndices = this.state.selectedIndices;
+        tempIndices[index1] = index2;
+        this.setState({ selectedIndices: tempIndices });
+      }
+    }
   }
   render() {
     var headerIndices = []
@@ -36,13 +54,13 @@ export class PurchasedContentsScroll extends React.Component {
         <ShopContentsCategory
           categoryName={categoryName}
           key={keyCounter++}
-          numItems={numItems} 
-          checkable = {false}/>);
+          numItems={numItems}
+          checkable={false} />);
       scrollItems.push(
         <ShopContentsUnderCategory
           data={shopContents}
           key={keyCounter++}
-          checkable = {false}/>);
+          checkable={false} />);
     }
     var numEachCategory = [];
     Object.keys(this.state.dict).map((categoryNumber) => {
@@ -64,19 +82,24 @@ export class PurchasedContentsScroll extends React.Component {
       }
     }
     return (
-      <ScrollView
-        stickyHeaderIndices={headerIndices}>
-        <SubTab />
-        {scrollItems}
-      </ScrollView>
+      <View style={{ flex: 1 }}>
+        <ScrollView
+          stickyHeaderIndices={headerIndices}>
+          <SubTab categoryData={categoryData} selectedIndices={this.state.selectedIndices} handler={this.categoryHandler} />
+          {scrollItems}
+        </ScrollView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  tabs: {
     flex: 1,
-    backgroundColor: 'white',
-    paddingTop: StatusBar.currentHeight,
+    height: 80,
   },
-});
+  scrolls: {
+    borderBottomWidth: 1,
+    borderBottomColor: BuildStyle.colorLightGray,
+  }
+})

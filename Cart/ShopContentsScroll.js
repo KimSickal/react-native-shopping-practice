@@ -24,6 +24,7 @@ export class ShopContentsScroll extends React.Component {
     this.deSelectAll = this.deSelectAll.bind(this);
     this.deleteSelected = this.deleteSelected.bind(this);
     this.alertDeletion = this.alertDeletion.bind(this);
+    this.alertPurchase = this.alertPurchase.bind(this);
     this.refreshAll = this.refreshAll.bind(this);
   }
   componentWillMount() {
@@ -98,6 +99,17 @@ export class ShopContentsScroll extends React.Component {
           ]
         )
     }
+  }
+  alertPurchase() {
+    Alert.alert(
+      title = 'Purchase',
+      message = 'Are you sure to purchase selected items?',
+      [
+        { text: 'Cancel' },
+        { text: 'Proceed' }
+      ]
+    )
+
   }
   refreshAll() { //// 디버그용 함수
     let tempData = this.state.dict;
@@ -182,7 +194,7 @@ export class ShopContentsScroll extends React.Component {
               discountFee={priceDiscount}
               shipingFee={priceShipping} />
           </ScrollView>
-          <CheckOutButton totalFee={priceTotal + priceShipping - priceDiscount} numSelected={numSelected} />
+          <CheckOutButton totalFee={priceTotal + priceShipping - priceDiscount} numSelected={numSelected} onPress={this.alertPurchase} />
         </React.Fragment>
       )
     }

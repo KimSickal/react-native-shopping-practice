@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet, View, Text,
-  TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback
-} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as BuildStyle from '../BuildStyle';
 
@@ -29,44 +26,43 @@ export class ShopContent extends React.Component {
       star = 2,
       reviews = 112,
       checkable = true,
-      onPressCheck,
+      onPressCheck = (() => { }),
       onPressDelete,
     } = this.props;
     return (
       <View style={[styles.shopContent, isSelected ? styles.shopContentSelected : styles.shopContentSelectedNot]}>
-        {checkable ?
-          <TouchableOpacity onPress={this.props.onPressCheck} >
-            <CheckCircle margin={BuildStyle.baseMargin} isSelected={isSelected} />
-          </TouchableOpacity>
-          :
-          <View style={{ width: 5 }} />}
-        <CenterizedText
-          text='image'
-          fontColor='white'
-          backgroundColor='gray'
-          width={60}
-          height={60}
-        />
-        <View style={styles.shopSummary}>
-          <View style={styles.shopText}>
-            <Text
-              numberOfLines={1}
-              style={styles.shopTextTitle}>
-              {cName}
-            </Text>
-            <Star score={star} reviews={reviews} />
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              {((!checkable) && isSelected) ?
-                <Text style={styles.shopTextSummary}>Purchased</Text> :
-                <PriceText price={cPrice}></PriceText>}
+        <TouchableOpacity onPress={onPressCheck} style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+          {checkable ?
+            <CheckCircle margin={BuildStyle.baseMargin} isSelected={isSelected} /> :
+            <View style={{ width: 5 }} />}
+          <CenterizedText
+            text='image'
+            fontColor='white'
+            backgroundColor='gray'
+            width={60}
+            height={60}
+          />
+          <View style={styles.shopSummary}>
+            <View style={styles.shopText}>
               <Text
                 numberOfLines={1}
-                style={[{ textAlign: 'right' }, styles.shopTextSummary]}>
-                {cDate}
+                style={styles.shopTextTitle}>
+                {cName}
               </Text>
+              <Star score={star} reviews={reviews} />
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                {((!checkable) && isSelected) ?
+                  <Text style={styles.shopTextSummary}>Purchased</Text> :
+                  <PriceText price={cPrice}></PriceText>}
+                <Text
+                  numberOfLines={1}
+                  style={[{ textAlign: 'right' }, styles.shopTextSummary]}>
+                  {cDate}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity onPress={onPressDelete}>
           <Ionicons
             name={

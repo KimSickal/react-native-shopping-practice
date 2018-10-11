@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, StatusBar, Text, View, ScrollView, SafeAreaView } from 'react-native';
+import { StyleSheet, StatusBar, View, SafeAreaView } from 'react-native';
 
 import * as BuildStyle from './BuildStyle';
 
@@ -16,7 +16,7 @@ export class Shop extends React.Component {
   }
   componentWillMount() {
     this.setState({
-      selectedTab: 1,
+      selectedTab: 0,
     })
   }
   changeTab(tabNumber) {
@@ -45,18 +45,18 @@ export class Shop extends React.Component {
             notiNumber={10}
             title='Cart'
             tabNumber={0}
-            selectedTab={this.state.selectedTab} 
-            onPress = {this.changeTab(0)}/>
+            selectedTab={this.state.selectedTab}
+            onPress={this.changeTab(0)} />
           <TapButton
             title='Purchased'
             tabNumber={1}
             selectedTab={this.state.selectedTab}
-            onPress = {this.changeTab(1)} />
+            onPress={this.changeTab(1)} />
         </View>
         {
           this.state.selectedTab == 0 ?
-          <ShopContentsScroll/>:
-          <PurchasedContentsScroll />
+            <ShopContentsScroll /> :
+            <PurchasedContentsScroll />
         }
       </SafeAreaView>
     );
