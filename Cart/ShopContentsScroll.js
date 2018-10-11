@@ -1,27 +1,41 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as BuildStyle from '../BuildStyle';
 
+import { CheckOutButton } from './CheckOutButton';
 import { CheckCircle } from './CheckCircle';
 import { PriceText } from './PriceText';
-import { ShopContent } from './ShopContent';
+import { ShopContentsUnderCategory } from './ShopContentsUnderCategory';
+import { ShopContentsCategory } from './ShopContentsCategory';
+
 import { data } from './DummyShopInfo';
 
 let priceShipping = 560
 let priceDiscount = 200
 
 export class ShopContentsScroll extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state = {dict: data};
+    this.state = { dict: data };
     this.selectFromDict = this.selectFromDict.bind(this);
+    this.deleteFromDict = this.deleteFromDict.bind(this);
     this.selectAll = this.selectAll.bind(this);
     this.deSelectAll = this.deSelectAll.bind(this);
+    this.deleteSelected = this.deleteSelected.bind(this);
+    this.alertDeletion = this.alertDeletion.bind(this);
+    this.refreshAll = this.refreshAll.bind(this);
   }
-  componentWillMount(){
+  componentWillMount() {
+    let tempData = data;
+    Object.keys(tempData).map((categoryIndex) => {
+      Object.keys(tempData[categoryIndex].shopContents).map((contentIndex) => {
+        (tempData[categoryIndex].shopContents[contentIndex]).isSelected = false;
+        (tempData[categoryIndex].shopContents[contentIndex]).isHided = false;
+      })
+    });
     this.setState({
-      dict: data,
+      dict: tempData,
     })
   }
   selectFromDict(categoryIndex) {
@@ -29,7 +43,7 @@ export class ShopContentsScroll extends React.Component {
     return (contentIndex) => {
       return () => {
         tempData[categoryIndex].shopContents[contentIndex].isSelected = !tempData[categoryIndex].shopContents[contentIndex].isSelected;
-        this.setState({ dict: tempData});
+        this.setState({ dict: tempData });
       }
     }
   }
@@ -37,29 +51,64 @@ export class ShopContentsScroll extends React.Component {
     let tempData = this.state.dict;
     return (contentIndex) => {
       return () => {
-        delete tempData[categoryIndex].shopContents[contentIndex];
-        this.setState({ dict: tempData});
+        tempData[categoryIndex].shopContents[contentIndex].isHided = true;
+        this.setState({ dict: tempData });
       }
     }
   }
-  selectAll(){
+  selectAll() {
     let tempData = this.state.dict;
-    Object.keys(tempData).map((categoryIndex)=>{
-      Object.keys(tempData[categoryIndex].shopContents).map((contentIndex)=>{
+    Object.keys(tempData).map((categoryIndex) => {
+      Object.keys(tempData[categoryIndex].shopContents).map((contentIndex) => {
         tempData[categoryIndex].shopContents[contentIndex].isSelected = true
       })
     })
-    this.setState({dict: tempData});
+    this.setState({ dict: tempData });
   }
-  deSelectAll(){
+  deSelectAll() {
     let tempData = this.state.dict;
-    Object.keys(tempData).map((categoryIndex)=>{
-      Object.keys(tempData[categoryIndex].shopContents).map((contentIndex)=>{
+    Object.keys(tempData).map((categoryIndex) => {
+      Object.keys(tempData[categoryIndex].shopContents).map((contentIndex) => {
         tempData[categoryIndex].shopContents[contentIndex].isSelected = false
       })
     })
-    this.setState({dict: tempData});
+    this.setState({ dict: tempData });
   }
+  deleteSelected() {
+    let tempData = this.state.dict;
+    Object.keys(tempData).map((categoryIndex) => {
+      Object.keys(tempData[categoryIndex].shopContents).map((contentIndex) => {
+        if ((!tempData[categoryIndex].shopContents[contentIndex].isHided)
+          && tempData[categoryIndex].shopContents[contentIndex].isSelected) {
+          tempData[categoryIndex].shopContents[contentIndex].isHided = true
+        }
+      })
+    })
+    this.setState({ dict: tempData });
+  }
+  alertDeletion(numSelected) {
+    return () => {
+      if (numSelected > 0)
+        Alert.alert(
+          title = 'Delete Items',
+          message = 'Are you sure to delete ' + numSelected + ' items?',
+          [
+            { text: 'Cancel' },
+            { text: 'Delete', onPress: this.deleteSelected },
+          ]
+        )
+    }
+  }
+  refreshAll() { //// 디버그용 함수
+    let tempData = this.state.dict;
+    Object.keys(tempData).map((categoryIndex) => {
+      Object.keys(tempData[categoryIndex].shopContents).map((contentIndex) => {
+        tempData[categoryIndex].shopContents[contentIndex].isHided = false
+      })
+    })
+    this.setState({ dict: tempData });
+  }
+
   render() {
     var headerIndices = []
     for (var i = 0; i < this.state.dict.length; i++) {
@@ -67,73 +116,104 @@ export class ShopContentsScroll extends React.Component {
     }
     var scrollItems = [];
     var keyCounter = 0;
-    function listWithCategories(categoryName, shopContents, toggleFunctionFunction) {
+    function listWithCategories(categoryName, shopContents, toggleFunction, deleteFunction, numItems) {
       scrollItems.push(
         <ShopContentsCategory
           categoryName={categoryName}
           key={keyCounter++}
-          numItems={shopContents.length} />);
+          numItems={numItems} />);
       scrollItems.push(
         <ShopContentsUnderCategory
-          toggleFunction={toggleFunctionFunction}
+          toggleFunction={toggleFunction}
+          deleteFunction={deleteFunction}
           data={shopContents}
           key={keyCounter++} />);
-    }
-    for (var i = 0; i < this.state.dict.length; i++) {
-      listWithCategories(
-        categoryName = this.state.dict[i].categoryName,
-        shopContents = this.state.dict[i].shopContents,
-        toggleFunctionFunction = this.selectFromDict(i).bind(),
-      );
     }
     var numTotal = 0;
     var numSelected = 0;
     var priceTotal = 0;
+    var numEachCategory = [];
     var priceEachCategory = {};
     Object.keys(this.state.dict).map((categoryNumber, keyCounter) => {
       var priceForCategory = 0;
+      var numForCategory = 0;
       for (i = 0; i < this.state.dict[categoryNumber].shopContents.length; i++) {
-        numTotal++;
-        if (this.state.dict[categoryNumber].shopContents[i].isSelected) {
-          numSelected++;
-          priceForCategory += this.state.dict[categoryNumber].shopContents[i].price;
-        };
+        if (!this.state.dict[categoryNumber].shopContents[i].isHided) {
+          numTotal++;
+          numForCategory++;
+          if (this.state.dict[categoryNumber].shopContents[i].isSelected) {
+            numSelected++;
+            priceForCategory += this.state.dict[categoryNumber].shopContents[i].price;
+          };
+        }
       }
+      numEachCategory.push(numForCategory);
       priceEachCategory[this.state.dict[categoryNumber].categoryName] = priceForCategory;
       priceTotal += priceForCategory;
     })
-    console.log(numTotal, numSelected);
-    return (
-      <ScrollView
-        stickyHeaderIndices={headerIndices}>
-        <SelectedCourses 
-          numTotal={numTotal} 
-          numSelected={numSelected} 
-          functionSelectAll={this.selectAll}
-          functionDeselectAll={this.deSelectAll}
-          isSelectedAll = {numTotal == numSelected} />
-        {scrollItems}
-        <ShopContentsCalculation
-          fees={priceEachCategory}
-          totalFee={priceTotal}
-          discountFee={priceDiscount}
-          shipingFee={priceShipping} />
-      </ScrollView>
-    )
+    for (var i = 0; i < this.state.dict.length; i++) {
+      if (numEachCategory[i] > 0) {
+        listWithCategories(
+          categoryName = this.state.dict[i].categoryName,
+          shopContents = this.state.dict[i].shopContents,
+          toggleFunction = this.selectFromDict(i),
+          deleteFunction = this.deleteFromDict(i),
+          numItems = numEachCategory[i],
+        );
+      }
+    }
+    //console.log(numTotal, numSelected);
+    if (numTotal > 0) {
+      return (
+        <React.Fragment>
+          <ScrollView
+            stickyHeaderIndices={headerIndices}>
+            <SelectedCourses
+              numTotal={numTotal}
+              numSelected={numSelected}
+              functionSelectAll={this.selectAll}
+              functionDeselectAll={this.deSelectAll}
+              functionDeleteSelected={this.alertDeletion(numSelected)}
+              isSelectedAll={numTotal == numSelected} />
+            {scrollItems}
+            <ShopContentsCalculation
+              fees={priceEachCategory}
+              totalFee={priceTotal}
+              discountFee={priceDiscount}
+              shipingFee={priceShipping} />
+          </ScrollView>
+          <CheckOutButton totalFee={priceTotal + priceShipping - priceDiscount} numSelected={numSelected} />
+        </React.Fragment>
+      )
+    }
+    else {
+      return (
+        <React.Fragment>
+          <CartIsEmpty functionRefresh={this.refreshAll} />
+          <CheckOutButton />
+        </React.Fragment>
+      )
+    }
   }
 }
 
 
 
-function ShopContentsCategory({
-  categoryName = 'Courses',
-  numItems = 3,
+
+function CartIsEmpty({
+  functionRefresh
 }) {
   return (
-    <View style={styles.totalCourses}>
-      <Ionicons name="md-cart" size={30} style={{ color: BuildStyle.colorLightGreen, marginLeft: BuildStyle.baseMargin - 2, marginRight: BuildStyle.baseMargin - 3 }} />
-      <Text style={styles.totalCoursesText}>{categoryName}: </Text>
-      <Text style={[styles.totalCoursesText, { fontWeight: 'bold', color: BuildStyle.textColor }]}>{numItems}</Text>
+    <View style={styles.cartIsEmpty}>
+      <Ionicons name='md-cart' style={styles.cartIsEmptyIcon} />
+      <Text style={styles.cartIsEmptyTitle}>Cart is Empty!</Text>
+      <TouchableOpacity onPress={functionRefresh}>
+        <Text style={styles.cartIsEmptyText}>
+          Click
+          <Text style={{ color: BuildStyle.colorGreen }}> here </Text>
+          to continue searching
+        </Text>
+      </TouchableOpacity>
     </View>
   )
 }
@@ -180,33 +260,6 @@ function ShopContentsCalculationCategory({
   )
 }
 
-function ShopContentsUnderCategory({
-  data,
-  toggleFunction,
-}) {
-  return (
-    <View>
-      {
-        Object.keys(data).map((contentKey, keyCounter) => {
-          var content = data[contentKey];
-          return (
-            <ShopContent
-              cName={content.name}
-              cDate={content.date}
-              cPrice={content.price}
-              star={content.star}
-              reviews={content.review}
-              checkable={true}
-              key={keyCounter}
-              isSelected={content.isSelected}
-              onPress={toggleFunction(contentKey)} />
-          )
-        })
-      }
-      <View style={styles.division} />
-    </View>
-  )
-}
 
 function SelectedCourses({
   numTotal = 10,
@@ -218,15 +271,15 @@ function SelectedCourses({
 }) {
   return (
     <View style={styles.selectedCourses}>
-      <TouchableOpacity onPress = {isSelectedAll? functionDeselectAll:functionSelectAll}>
+      <TouchableOpacity onPress={isSelectedAll ? functionDeselectAll : functionSelectAll}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <CheckCircle margin={BuildStyle.baseMargin} isSelected = {isSelectedAll} />
-          <Text style={styles.selectedCoursesText}>{isSelectedAll?'Deselect':'Select'} All ({numSelected} / {numTotal})
+          <CheckCircle margin={BuildStyle.baseMargin} isSelected={isSelectedAll} />
+          <Text style={styles.selectedCoursesText}>{isSelectedAll ? 'Deselect' : 'Select'} All ({numSelected} / {numTotal})
             </Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
-        <Ionicons name='md-trash' size={30} style={{ color: BuildStyle.colorLightGray, margin: 5, marginRight: BuildStyle.baseMargin - 5 }} />
+      <TouchableOpacity onPress={functionDeleteSelected}>
+        <Ionicons name='md-trash' size={30} style={{ color: (numSelected > 0) ? BuildStyle.colorGreen : BuildStyle.colorLightGray, margin: 5, marginRight: BuildStyle.baseMargin - 5 }} />
       </TouchableOpacity>
     </View>
   )
@@ -234,21 +287,6 @@ function SelectedCourses({
 
 
 const styles = StyleSheet.create({
-
-  totalCourses: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: 'white',
-    borderBottomColor: BuildStyle.colorLightGray,
-    borderBottomWidth: 1,
-    height: 40,
-  },
-  totalCoursesText: {
-    fontSize: BuildStyle.fontNormal,
-    color: BuildStyle.textColor,
-  },
-
   selectedCourses: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -264,12 +302,6 @@ const styles = StyleSheet.create({
   },
 
 
-
-  division: {
-    height: 10,
-    borderTopWidth: 5,
-    borderTopColor: 'white',
-  },
 
   shopContentsCalculation: {
     backgroundColor: 'white',
@@ -290,4 +322,24 @@ const styles = StyleSheet.create({
     color: BuildStyle.textColor,
   },
 
+  cartIsEmpty: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: BuildStyle.colorLightGray,
+  },
+  cartIsEmptyIcon: {
+    fontSize: BuildStyle.fontLarge * 10,
+    color: BuildStyle.colorGray,
+  },
+  cartIsEmptyTitle: {
+    fontSize: BuildStyle.fontLarge * 2,
+    color: BuildStyle.textColor,
+    fontWeight: 'bold',
+  },
+  cartIsEmptyText: {
+    fontSize: BuildStyle.fontNormal,
+    color: BuildStyle.colorGray,
+  }
 })

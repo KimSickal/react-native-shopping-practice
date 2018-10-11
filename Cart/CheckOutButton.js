@@ -9,9 +9,8 @@ import { PriceText } from './PriceText';
 export class CheckOutButton extends React.Component {
     render(){
         const {
-            totalFee = 3593,
-            originFee = 0,
-            discountFee = 0,
+            totalFee = 0,
+            numSelected = 0,
         } = this.props;
         return(
             <View style = {styles.checkOutButton}>
@@ -19,13 +18,13 @@ export class CheckOutButton extends React.Component {
                 <View style = {{flexDirection: 'row', alignItems: 'center',}}>
                   <CheckCircle
                     margin = {BuildStyle.baseMargin}
-                    isSelected = {true}
+                    isSelected = {numSelected > 0}
                     />
-                  <Text style = {styles.checkOutButtonTextLarge}>3 Items</Text>
+                  <Text style = {styles.checkOutButtonTextLarge}>{numSelected} Items</Text>
                 </View>
                 <View style = {{flexDirection: 'row', alignItems: 'center'}}>
                   <Text style = {styles.checkOutButtonTextLarge}>Total </Text>
-                  <PriceText price = {3593} fontSize = {BuildStyle.fontLarge} color = {BuildStyle.colorLightGreen} />
+                  <PriceText price = {(numSelected > 0)?totalFee:0} fontSize = {BuildStyle.fontLarge} color = {BuildStyle.colorLightGreen} />
                 </View>
                 {/*}
                 <View style = {{flexDirection: 'row'}}>
@@ -38,12 +37,11 @@ export class CheckOutButton extends React.Component {
                 height = {60}
                 width = {120}
                 backgroundColor = {BuildStyle.colorLightGreen}
-                text = 'Check Out'
+                text = 'Purchase'
                 fontColor = 'white'
                 fontSize = {BuildStyle.fontLarge}
                 fontWeight = 'bold'
               />
-              
             </View>
         )
     }

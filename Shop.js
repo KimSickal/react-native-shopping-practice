@@ -3,13 +3,29 @@ import { StyleSheet, StatusBar, Text, View, ScrollView, SafeAreaView } from 'rea
 
 import * as BuildStyle from './BuildStyle';
 
-import { CheckOutButton } from './Cart/CheckOutButton';
 import { ShopContentsScroll } from './Cart/ShopContentsScroll';
+import { PurchasedContentsScroll } from './Purchased/PurchasedContentsScroll';
 import { Title } from './Cart/Title';
 import { TapButton } from './Cart/TapButton';
 
 
 export class Shop extends React.Component {
+  constructor(props) {
+    super(props);
+    this.changeTab = this.changeTab.bind(this);
+  }
+  componentWillMount() {
+    this.setState({
+      selectedTab: 1,
+    })
+  }
+  changeTab(tabNumber) {
+    return () => {
+      if (this.state.selectedTab != tabNumber) {
+        this.setState({ selectedTab: tabNumber })
+      }
+    }
+  }
   render() {
     return (
       <SafeAreaView style={[
@@ -24,16 +40,24 @@ export class Shop extends React.Component {
         <Title title='My Courses'></Title>
         <View style={{
           flexDirection: 'row',
-          //marginLeft:1,
         }}>
           <TapButton
             notiNumber={10}
-            isSelected={true} />
+            title='Cart'
+            tabNumber={0}
+            selectedTab={this.state.selectedTab} 
+            onPress = {this.changeTab(0)}/>
           <TapButton
-            title='Purchased' />
+            title='Purchased'
+            tabNumber={1}
+            selectedTab={this.state.selectedTab}
+            onPress = {this.changeTab(1)} />
         </View>
-        <ShopContentsScroll/>
-        <CheckOutButton totalFee='3,333' originFee='0' disountFee='0' />
+        {
+          this.state.selectedTab == 0 ?
+          <ShopContentsScroll/>:
+          <PurchasedContentsScroll />
+        }
       </SafeAreaView>
     );
   }

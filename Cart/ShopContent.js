@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, Text, 
-  TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback } from 'react-native';
+import {
+  StyleSheet, View, Text,
+  TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as BuildStyle from '../BuildStyle';
 
@@ -10,7 +12,7 @@ import { Star } from './Star';
 import { PriceText } from './PriceText';
 
 export class ShopContent extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
   }
   componentWillMount() {
@@ -27,11 +29,13 @@ export class ShopContent extends React.Component {
       star = 2,
       reviews = 112,
       checkable = true,
+      onPressCheck,
+      onPressDelete,
     } = this.props;
     return (
       <View style={[styles.shopContent, isSelected ? styles.shopContentSelected : styles.shopContentSelectedNot]}>
         {checkable ?
-          <TouchableOpacity onPress = {this.props.onPress} >
+          <TouchableOpacity onPress={this.props.onPressCheck} >
             <CheckCircle margin={BuildStyle.baseMargin} isSelected={isSelected} />
           </TouchableOpacity>
           :
@@ -63,14 +67,14 @@ export class ShopContent extends React.Component {
             </View>
           </View>
         </View>
-        <Ionicons
-          name={
-            checkable ? 'md-close' : (
-              isSelected ? 'md-play' : 'md-cart'
-            )
-          } size={20} style={{ color: BuildStyle.colorLightGray, marginHorizontal: BuildStyle.baseMargin }} />
-
-
+        <TouchableOpacity onPress={onPressDelete}>
+          <Ionicons
+            name={
+              checkable ? 'md-close' : (
+                isSelected ? 'md-play' : 'md-cart'
+              )
+            } size={20} style={{ color: BuildStyle.colorLightGray, marginHorizontal: BuildStyle.baseMargin }} />
+        </TouchableOpacity>
       </View>
     )
   }

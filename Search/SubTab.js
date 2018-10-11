@@ -6,7 +6,7 @@ import * as BuildStyle from '../BuildStyle';
 export class SubTab extends React.Component {
   render() {
     const {
-      categoryNames = ['1st Grade', 'English', 'Popularity']
+      categoryNames = ['1st Grade', 'English', 'Sort by Date']
     } = this.props;
     return (
       <View style = {styles.subTab}>
@@ -23,23 +23,12 @@ export class SubTab extends React.Component {
                 <Ionicons name = 'md-arrow-dropdown' style = {styles.tabText}/>
               </View>
             )
-
           })
         }
       </View>
     )
   }
 }
-/*
-function tab({
-
-}){
-  return(
-    <View style = {styles.subTab}>
-      <Text style = {styles.categoryText}></Text>
-    </View>
-  )
-}*/
 const styles = StyleSheet.create({
   subTab:{
     height: 40,
